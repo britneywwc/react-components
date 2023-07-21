@@ -89,15 +89,26 @@ export const Modal = ({
   }, [modalRef]);
 
   useEffect(() => {
-    focusableModalElements.current = modalRef.current.querySelectorAll(
-      focusableElementSelectors
-    );
-    let focusIndex = 0;
-    // when the close button is rendered, focus on the 2nd content element and not the close btn.
-    if (close && focusableModalElements.current.length > 1) {
-      focusIndex = 1;
+    if (modalRef.current) {
+      const positiveButton: HTMLButtonElement | null =
+        modalRef?.current?.querySelector("button.p-button--positive");
+      // If the modal has a positive button then focus on that after opening
+      // to make a better keyboard navigation experience.
+      if (positiveButton) {
+        positiveButton.focus();
+      } else {
+        focusableModalElements.current = modalRef.current.querySelectorAll(
+          focusableElementSelectors
+        );
+        let focusIndex = 0;
+        // If there is no positive button and close button is rendered,
+        // focus on the 2nd content element and not the close btn.
+        if (close && focusableModalElements.current.length > 1) {
+          focusIndex = 1;
+        }
+        focusableModalElements.current[focusIndex]?.focus();
+      }
     }
-    focusableModalElements.current[focusIndex]?.focus();
   }, []);
 
   useEffect(() => {
